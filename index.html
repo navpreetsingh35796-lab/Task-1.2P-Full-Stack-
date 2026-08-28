@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>DEV@Deakin - Welcome Email</title>
+  <style>
+    * { box-sizing: border-box; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
+    body { margin: 0; background: #f8fafc; color: #333; }
+
+    header {
+      background-color: #1e293b;
+      color: #fff;
+      padding: 1.5rem 2rem;
+      text-align: center;
+    }
+
+    .newsletter-banner {
+      background-color: #e2e8f0;
+      padding: 1.25rem 2rem;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 1rem;
+      flex-wrap: wrap;
+      margin: 2rem auto;
+      max-width: 900px;
+      border-radius: 8px;
+    }
+
+    .banner-title {
+      font-weight: 700;
+      letter-spacing: 0.05em;
+      font-size: 0.95rem;
+      color: #0f172a;
+    }
+
+    .newsletter-form {
+      display: flex;
+      gap: 0.5rem;
+    }
+
+    input[type="email"] {
+      padding: 0.6rem 1rem;
+      border: 1px solid #cbd5e1;
+      border-radius: 4px;
+      min-width: 260px;
+      outline: none;
+    }
+
+    button {
+      padding: 0.6rem 1.25rem;
+      background-color: #475569;
+      color: #ffffff;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      font-weight: 600;
+      transition: background 0.2s ease;
+    }
+
+    button:hover { background-color: #334155; }
+
+    #response-msg {
+      text-align: center;
+      font-weight: 500;
+      margin-top: 1rem;
+    }
+  </style>
+</head>
+<body>
+
+  <header>
+    <h1>DEV@Deakin</h1>
+  </header>
+
+  <div class="newsletter-banner">
+    <span class="banner-title">SIGN UP FOR OUR DAILY INSIDER</span>
+    <form id="subscribeForm" class="newsletter-form">
+      <input type="email" id="email" placeholder="Enter your email" required />
+      <button type="submit">Subscribe</button>
+    </form>
+  </div>
+
+  <p id="response-msg"></p>
+
+  <script>
+    const form = document.getElementById('subscribeForm');
+    const msg = document.getElementById('response-msg');
+
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const email = document.getElementById('email').value;
+
+      msg.innerText = "Processing subscription...";
+      msg.style.color = "#475569";
+
+      try {
+        const res = await fetch('/subscribe', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ email })
+        });
+
+        const data = await res.json();
+
+        if (res.ok) {
+          msg.innerText = data.message;
+          msg.style.color = "green";
+          form.reset();
+        } else {
+          msg.innerText = data.error || "Subscription failed.";
+          msg.style.color = "red";
+        }
+      } catch (err) {
+        msg.innerText = "Network error. Please try again.";
+        msg.style.color = "red";
+      }
+    });
+  </script>
+</body>
+</html>
